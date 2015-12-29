@@ -11,18 +11,18 @@ $config = array(
 
 $obj = new DoraRPC\Client($config);
 file_put_contents("/tmp/sw_client_test.log","start:".date("Y-m-d H:i:s")."\r\n", FILE_APPEND);
-for ($i = 0; $i < 10000; $i++) {
+for ($i = 0; $i < 1000; $i++) {
     //single && sync
-    $ret = $obj->singleAPI("abc", array(234, $i), false,1);
+    $ret = $obj->singleAPI("abc", array(234, $i), true,1);
     var_dump($ret);
 
     //multi && async
-    $data = array(
-        "oak" => array("name" => "oakdf", "param" => array("dsaf" => "321321")),
-        "cd" => array("name" => "oakdfff", "param" => array("codo" => "fds")),
-    );
-    $ret = $obj->multiAPI($data, true,1);
-    var_dump($ret);
+    // $data = array(
+    //     "oak" => array("name" => "oakdf", "param" => array("dsaf" => "321321")),
+    //     "cd" => array("name" => "oakdfff", "param" => array("codo" => "fds")),
+    // );
+    // $ret = $obj->multiAPI($data, true,1);
+    // var_dump($ret);
 }
 file_put_contents("/tmp/sw_client_test.log","End:".date("Y-m-d H:i:s")."\r\n", FILE_APPEND);
 
