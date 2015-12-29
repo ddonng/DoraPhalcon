@@ -68,7 +68,7 @@ class Server extends DoraRPC\Server {
                 $route =  new  Phalcon\Mvc\Micro\Collection();
                 $route->setHandler('IndexController',true);
                 $route->setPrefix('one/');
-                $route->map('{pid}/{tid}','indexAction');
+                $route->map('{guid}/{tid}','indexAction');
                 self::$appInstance->mount($route);
                 file_put_contents("/tmp/sw_server_instance.log","new AppInstance".date("Y-m-d H:i:s")."\r\n", FILE_APPEND);
 
@@ -94,11 +94,31 @@ class Server extends DoraRPC\Server {
     function doWork($param){
         //process you logical 业务实际处理代码仍这里
         //return the result 使用return返回处理结果
+        
+        // array (
+        //   'type' => 'SSS',
+        //   'guid' => 'b3c29d615fc233a8780f5160bf3e059b',
+        //   'fd' => 1,
+        //   'api' => 
+        //   array (
+        //     'name' => 'abc',
+        //     'param' => 
+        //     array (
+        //       0 => 234,
+        //       1 => 99,
+        //       ),
+        //     ),
+        //   )
+
+        // use prefix special every Interface ,prefix maxLength?
+
 
         // return $param;
+        $yac = new Yac();
+        $yac->set($param['guid'],$param,1);
         $app = self::getAppInstance();
 
-        return $app->handle("one/pppppid/tttid");
+        return $app->handle("one/".$param['guid']."/tttid");
         // return array("hehe"=>"ohyes","time"=>date('H:i:s',time()));
     }
 
