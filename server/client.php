@@ -22,7 +22,7 @@ for ($i = 0; $i < 100; $i++) {
         "oak" => array("name" => "add_user", "param" => array("name" => "NO".$i,"department"=>"DEP".$i)),
         "cd" => array("name" => "update_user", "param" => array("name" => "update".$i,"department"=>"update".$i)),
     );
-    $ret = $obj->multiAPI($data, true,1);
+    $ret = $obj->multiAPI($data, false,1);
     var_dump($ret);
 
 }
