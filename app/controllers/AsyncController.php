@@ -13,7 +13,15 @@ class AsyncController extends ControllerBase
     	$user->name = $ret['param']['name'];
     	$user->department = $ret['param']['department'];
 
-    	$user->save();
+    	$success =  $user->save();
+    	if ($success) {
+    		echo "Thanks for registering!\r\n";
+    	} else {
+    		echo "Sorry, the following problems were generated: ";
+    		foreach ($user->getMessages() as $message) {
+    			echo $message->getMessage(), "<br/>";
+    		}
+    	}
     	// $arr = unserialize($ret);
     	// return array("heihei"=>$ret,"ret2"=>$ret2);
     }
@@ -28,7 +36,15 @@ class AsyncController extends ControllerBase
     	$user->name = $ret['param']['name'];
     	$user->department = $ret['param']['department'];
 
-    	$user->save();
+    	$success =  $user->save();
+    	if ($success) {
+    		echo "Thanks for registering!";
+    	} else {
+    		echo "Sorry, the following problems were generated: ";
+    		foreach ($user->getMessages() as $message) {
+    			echo $message->getMessage(), "<br/>";
+    		}
+    	}
     	// $arr = unserialize($ret);
     	// return array("heihei"=>$ret,"ret2"=>$ret2);
     }

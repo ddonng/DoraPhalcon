@@ -147,6 +147,7 @@ class Server extends DoraRPC\Server {
 
         $route = $routePrefix.'/'.$yacPrefix.'/'.$key;
 
+        var_dump($app);
         return $app->handle($route);
 
     }
