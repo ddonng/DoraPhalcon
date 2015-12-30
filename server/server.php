@@ -65,11 +65,19 @@ class Server extends DoraRPC\Server {
                 
                 self::$appInstance = new \Phalcon\Mvc\Micro($di);
 
-                $route =  new  Phalcon\Mvc\Micro\Collection();
-                $route->setHandler('SyncController',true);
-                $route->setPrefix('sync/');
-                $route->map('{yacPrefix}/{key}','indexAction');
-                self::$appInstance->mount($route);
+                $syncRoute =  new  Phalcon\Mvc\Micro\Collection();
+                $syncRoute->setHandler('SyncController',true);
+                $syncRoute->setPrefix('sync/');
+                $syncRoute->map('get_user/{yacPrefix}/{key}','indexAction');
+                self::$appInstance->mount($syncRoute);
+
+                $asyncRoute =  new  Phalcon\Mvc\Micro\Collection();
+                $asyncRoute->setHandler('AsyncController',true);
+                $asyncRoute->setPrefix('async/');
+                $asyncRoute->map('add_user/{yacPrefix}/{key}','addUserAction');
+                $asyncRoute->map('update_user/{yacPrefix}/{key}','updateUserAction');
+                self::$appInstance->mount($asyncRoute);
+
                 file_put_contents("/tmp/sw_server_instance.log","new AppInstance".date("Y-m-d H:i:s")."\r\n", FILE_APPEND);
 
             } catch (\Exception $e) {
@@ -113,18 +121,20 @@ class Server extends DoraRPC\Server {
         // Two route Controller : sync and async
         $routePrefix = '';
         $type = $param['type'];
+        $apiName = $param['api']['name'];
+
         if($type == DoraRPC\DoraConst::SW_SYNC_SINGLE || $type == DoraRPC\DoraConst::SW_SYNC_MULTI)
         {
-            $routePrefix = 'sync';
+            $routePrefix = 'sync/'.$apiName;
         } elseif($type == DoraRPC\DoraConst::SW_ASYNC_SINGLE || $type == DoraRPC\DoraConst::SW_ASYNC_MULTI){
-            $routePrefix = 'async';
+            $routePrefix = 'async/'.$apiName;
         }
 
         // use prefix special every Interface ,prefix maxLength?
 
 
         // return $param;
-        $yacPrefix = $param['type']."_".$param['api']['name'];
+        $yacPrefix = $type."_".$apiName;
 
         $key = $param['guid'];
 
