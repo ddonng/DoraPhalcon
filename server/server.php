@@ -66,9 +66,9 @@ class Server extends DoraRPC\Server {
                 self::$appInstance = new \Phalcon\Mvc\Micro($di);
 
                 $route =  new  Phalcon\Mvc\Micro\Collection();
-                $route->setHandler('IndexController',true);
-                $route->setPrefix('one/');
-                $route->map('{guid}/{tid}','indexAction');
+                $route->setHandler('SyncController',true);
+                $route->setPrefix('sync/');
+                $route->map('{yacPrefix}/{key}','indexAction');
                 self::$appInstance->mount($route);
                 file_put_contents("/tmp/sw_server_instance.log","new AppInstance".date("Y-m-d H:i:s")."\r\n", FILE_APPEND);
 
@@ -110,16 +110,35 @@ class Server extends DoraRPC\Server {
         //     ),
         //   )
 
+        // Two route Controller : sync and async
+        $routePrefix = '';
+        $type = $param['type'];
+        if($type == DoraRPC\DoraConst::SW_SYNC_SINGLE || $type == DoraRPC\DoraConst::SW_SYNC_MULTI)
+        {
+            $routePrefix = 'sync';
+        } elseif($type == DoraRPC\DoraConst::SW_ASYNC_SINGLE || $type == DoraRPC\DoraConst::SW_ASYNC_MULTI){
+            $routePrefix = 'async';
+        }
+
         // use prefix special every Interface ,prefix maxLength?
 
 
         // return $param;
-        $yac = new Yac();
-        $yac->set($param['guid'],$param,1);
+        $yacPrefix = $param['type']."_".$param['api']['name'];
+
+        $key = $param['guid'];
+
+        $yac = new Yac($yacPrefix);
+
+        //ttl set 1 seconds. Attension Please!!! IF server quit/restart, All Yac cache will flush !!
+        $yac->set($key,$param['api'],1);
+
         $app = self::getAppInstance();
 
-        return $app->handle("one/".$param['guid']."/tttid");
-        // return array("hehe"=>"ohyes","time"=>date('H:i:s',time()));
+        $route = $routePrefix.'/'.$yacPrefix.'/'.$key;
+
+        return $app->handle($route);
+
     }
 
     function initTask($server, $worker_id){

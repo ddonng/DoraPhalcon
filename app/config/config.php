@@ -5,10 +5,10 @@ defined('APP_PATH') || define('APP_PATH', realpath('.'));
 return new \Phalcon\Config(array(
     'database' => array(
         'adapter'     => 'Mysql',
-        'host'        => 'localhost',
-        'username'    => 'root',
-        'password'    => '',
-        'dbname'      => 'test',
+        'host'        => '10.34.2.46',
+        'username'    => 'myuser',
+        'password'    => '123456',
+        'dbname'      => 'swoole',
         'charset'     => 'utf8',
     ),
     'application' => array(
@@ -18,7 +18,7 @@ return new \Phalcon\Config(array(
         // 'viewsDir'       => APP_PATH . '/app/views/',
         'pluginsDir'     => APP_PATH . '/app/plugins/',
         'libraryDir'     => APP_PATH . '/app/library/',
-        'cacheDir'       => APP_PATH . '/app/cache/',
+        // 'cacheDir'       => APP_PATH . '/app/cache/',
         'baseUri'        => '/swooleDora/',
     )
 ));
