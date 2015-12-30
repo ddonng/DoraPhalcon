@@ -9,7 +9,7 @@ class AsyncController extends ControllerBase
     	$ret = $yac->get($key);
 
         $phql = "INSERT INTO User(name,department) VALUES(:name:,:department:)";
-        // $this->modelsManager->executeQuery($phql,array('name'=>$ret['param']['name'],'department'=>$ret['param']['department']));
+        $ret2 = $this->modelsManager->executeQuery($phql,array('name'=>$ret['param']['name'],'department'=>$ret['param']['department']));
     	// $user = new User();
 
     	// $user->name = $ret['param']['name'];
@@ -25,13 +25,13 @@ class AsyncController extends ControllerBase
     	// 		echo $message->getMessage(), "\r\n";
     	// 	}
     	// }
-        if(!$ret)
+        if($ret2)
         {
             var_export(array($key,$ret));
-            echo "\r\n";
         }
 
         $yac->delete($key);
+        return true;
     	// $arr = unserialize($ret);
     	// return array("heihei"=>$ret,"ret2"=>$ret2);
     }
@@ -42,21 +42,21 @@ class AsyncController extends ControllerBase
     	$ret = $yac->get($key);
     	// Q: Does ttl expired key flushed or not?
         
-    	// $user = new User();
+    	$user = new User();
 
-    	// $user->name = $ret['param']['name'];
-    	// $user->department = $ret['param']['department'];
+    	$user->name = $ret['param']['name'];
+    	$user->department = $ret['param']['department'];
 
-    	// $success =  $user->save();
-     //    if ($success) {
-     //        unset($user);
-     //        echo "Thanks for registering!\r\n";
-     //    } else {
-     //        echo "Sorry, $yacPrefix:::::::$key \r\n";
-     //        foreach ($user->getMessages() as $message) {
-     //            echo $message->getMessage(), "\r\n";
-     //        }
-     //    }
+    	$success =  $user->save();
+        if ($success) {
+            unset($user);
+            // echo "Thanks for registering!\r\n";
+        } else {
+            echo "Sorry, $yacPrefix:::::::$key \r\n";
+            foreach ($user->getMessages() as $message) {
+                echo $message->getMessage(), "\r\n";
+            }
+        }
         if(!$ret)
         {
             var_export(array($key,$ret));
@@ -64,6 +64,7 @@ class AsyncController extends ControllerBase
         }
 
         $yac->delete($key);
+        return true;
     	// $arr = unserialize($ret);
     	// return array("heihei"=>$ret,"ret2"=>$ret2);
     }

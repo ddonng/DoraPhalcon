@@ -25,9 +25,12 @@ class Server extends DoraRPC\Server {
 
         //the number of task logical process progcessor run you business code
         //实际业务处理进程，根据需要进行调整
-        'task_worker_num' => 200,
-        
-        'daemonize' => 0, 
+
+        /******************************************/
+        'task_worker_num' => 140, //太大引起崩溃会提示onFinish那里的$data是数组而不是string
+        /*******************************************/
+
+        'daemonize' => 0, //production 1
    );
 
     public static function getDiInstance() {

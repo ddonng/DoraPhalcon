@@ -274,13 +274,13 @@ abstract class Server
         }
 
         //fixed the result more than 8k timeout bug
-        $serialize_data = serialize($data);
-        if (strlen($serialize_data) > 8000) {
+        $data = serialize($data);
+        if (strlen($data) > 8000) {
             $temp_file = tempnam(sys_get_temp_dir(), 'swmore8k');
-            file_put_contents($temp_file, $serialize_data);
+            file_put_contents($temp_file, $data);
             return '$$$$$$$$' . $temp_file;
         } else {
-            return $serialize_data;
+            return $data;
         }
     }
 

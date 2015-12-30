@@ -8,7 +8,7 @@ class SyncController extends Phalcon\Mvc\Controller
     	$yac = new Yac($yacPrefix);
     	$ret = $yac->get($key);
     	// Q: Does ttl expired key flushed or not?
-    	// $ret2 = User::find()->toArray();
+    	$ret2 = User::find()->toArray();
     	// $arr = unserialize($ret);
 
     	if(!$ret)
@@ -17,7 +17,7 @@ class SyncController extends Phalcon\Mvc\Controller
             echo "\r\n";
         }
     	$yac->delete($key);
-    	return array("heihei"=>$ret);
+    	return array("heihei"=>$ret2);
     }
 
 }
