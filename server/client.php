@@ -11,10 +11,10 @@ $config = array(
 
 $obj = new DoraRPC\Client($config);
 file_put_contents("/tmp/sw_client_test.log","start:".date("Y-m-d H:i:s")."\r\n", FILE_APPEND);
-for ($i = 0; $i < 100; $i++) {
+for ($i = 0; $i < 10000; $i++) {
     //single && sync
-    // $ret = $obj->singleAPI("get_user", array(234, $i), true,1);
-    // var_dump($ret);
+    $ret = $obj->singleAPI("get_user", array(234, $i), true,1);
+    var_dump($ret);
 
     // multi && async
 

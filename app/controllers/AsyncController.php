@@ -7,21 +7,31 @@ class AsyncController extends ControllerBase
     {
     	$yac = new Yac($yacPrefix);
     	$ret = $yac->get($key);
-    	// Q: Does ttl expired key flushed or not?
-    	$user = new User();
 
-    	$user->name = $ret['param']['name'];
-    	$user->department = $ret['param']['department'];
+        $phql = "INSERT INTO User(name,department) VALUES(:name:,:department:)";
+        // $this->modelsManager->executeQuery($phql,array('name'=>$ret['param']['name'],'department'=>$ret['param']['department']));
+    	// $user = new User();
 
-    	$success =  $user->save();
-    	if ($success) {
-    		echo "Thanks for registering!\r\n";
-    	} else {
-    		echo "Sorry, the following problems were generated: ";
-    		foreach ($user->getMessages() as $message) {
-    			echo $message->getMessage(), "<br/>";
-    		}
-    	}
+    	// $user->name = $ret['param']['name'];
+    	// $user->department = $ret['param']['department'];
+
+    	// $success =  $user->save();
+    	// if ($success) {
+     //        unset($user);
+    	// 	echo "Thanks for registering!\r\n";
+    	// } else {
+    	// 	echo "Sorry, $yacPrefix:::::::$key \r\n";
+    	// 	foreach ($user->getMessages() as $message) {
+    	// 		echo $message->getMessage(), "\r\n";
+    	// 	}
+    	// }
+        if(!$ret)
+        {
+            var_export(array($key,$ret));
+            echo "\r\n";
+        }
+
+        $yac->delete($key);
     	// $arr = unserialize($ret);
     	// return array("heihei"=>$ret,"ret2"=>$ret2);
     }
@@ -31,20 +41,29 @@ class AsyncController extends ControllerBase
     	$yac = new Yac($yacPrefix);
     	$ret = $yac->get($key);
     	// Q: Does ttl expired key flushed or not?
-    	$user = new User();
+        
+    	// $user = new User();
 
-    	$user->name = $ret['param']['name'];
-    	$user->department = $ret['param']['department'];
+    	// $user->name = $ret['param']['name'];
+    	// $user->department = $ret['param']['department'];
 
-    	$success =  $user->save();
-    	if ($success) {
-    		echo "Thanks for registering!";
-    	} else {
-    		echo "Sorry, the following problems were generated: ";
-    		foreach ($user->getMessages() as $message) {
-    			echo $message->getMessage(), "<br/>";
-    		}
-    	}
+    	// $success =  $user->save();
+     //    if ($success) {
+     //        unset($user);
+     //        echo "Thanks for registering!\r\n";
+     //    } else {
+     //        echo "Sorry, $yacPrefix:::::::$key \r\n";
+     //        foreach ($user->getMessages() as $message) {
+     //            echo $message->getMessage(), "\r\n";
+     //        }
+     //    }
+        if(!$ret)
+        {
+            var_export(array($key,$ret));
+            echo "\r\n";
+        }
+
+        $yac->delete($key);
     	// $arr = unserialize($ret);
     	// return array("heihei"=>$ret,"ret2"=>$ret2);
     }

@@ -1,6 +1,6 @@
 <?php
 
-class SyncController extends ControllerBase
+class SyncController extends Phalcon\Mvc\Controller
 {
 
     public function indexAction($yacPrefix,$key)
@@ -8,9 +8,16 @@ class SyncController extends ControllerBase
     	$yac = new Yac($yacPrefix);
     	$ret = $yac->get($key);
     	// Q: Does ttl expired key flushed or not?
-    	$ret2 = User::find()->toArray();
+    	// $ret2 = User::find()->toArray();
     	// $arr = unserialize($ret);
-    	return array("heihei"=>$ret,"ret2"=>$ret2);
+
+    	if(!$ret)
+        {
+            var_export(array($key,$ret));
+            echo "\r\n";
+        }
+    	$yac->delete($key);
+    	return array("heihei"=>$ret);
     }
 
 }

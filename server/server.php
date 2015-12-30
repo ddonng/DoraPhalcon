@@ -66,12 +66,15 @@ class Server extends DoraRPC\Server {
                 self::$appInstance = new \Phalcon\Mvc\Micro($di);
 
                 $syncRoute =  new  Phalcon\Mvc\Micro\Collection();
+                // $syncRoute->setHandler(new SyncController($di));
                 $syncRoute->setHandler('SyncController',true);
+
                 $syncRoute->setPrefix('sync/');
                 $syncRoute->map('get_user/{yacPrefix}/{key}','indexAction');
                 self::$appInstance->mount($syncRoute);
 
                 $asyncRoute =  new  Phalcon\Mvc\Micro\Collection();
+                // $asyncRoute->setHandler(new AsyncController($di));
                 $asyncRoute->setHandler('AsyncController',true);
                 $asyncRoute->setPrefix('async/');
                 $asyncRoute->map('add_user/{yacPrefix}/{key}','addUserAction');
@@ -140,14 +143,18 @@ class Server extends DoraRPC\Server {
 
         $yac = new Yac($yacPrefix);
 
-        //ttl set 1 seconds. Attension Please!!! IF server quit/restart, All Yac cache will flush !!
-        $yac->set($key,$param['api'],1);
+        // Wrong-----ttl set 1 seconds. Attension Please!!! IF server quit/restart, All Yac cache will flush !!
+        // I'm so stupid, Waht time Task would be called is unknown, Just delete the cache after doAction would be fine!!
+        // $yac->set($key,$param['api'],1);//wrong, save it for remember! 2015-12-30 shurufa
+
+
+        $yac->set($key,$param['api']);
 
         $app = self::getAppInstance();
 
         $route = $routePrefix.'/'.$yacPrefix.'/'.$key;
 
-        var_dump($app);
+        // var_dump($app);
         return $app->handle($route);
 
     }
