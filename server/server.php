@@ -73,15 +73,15 @@ class Server extends DoraRPC\Server {
                 $syncRoute->setHandler('SyncController',true);
 
                 $syncRoute->setPrefix('sync/');
-                $syncRoute->map('get_user/{yacPrefix}/{key}','indexAction');
+                $syncRoute->map('get_user/{api}/{guid}','indexAction');
                 self::$appInstance->mount($syncRoute);
 
                 $asyncRoute =  new  Phalcon\Mvc\Micro\Collection();
                 // $asyncRoute->setHandler(new AsyncController($di));
                 $asyncRoute->setHandler('AsyncController',true);
                 $asyncRoute->setPrefix('async/');
-                $asyncRoute->map('add_user/{yacPrefix}/{key}','addUserAction');
-                $asyncRoute->map('update_user/{yacPrefix}/{key}','updateUserAction');
+                $asyncRoute->map('add_user/{api}/{guid}','addUserAction');
+                $asyncRoute->map('update_user/{api}/{guid}','updateUserAction');
                 self::$appInstance->mount($asyncRoute);
 
                 file_put_contents("/tmp/sw_server_instance.log","new AppInstance".date("Y-m-d H:i:s")."\r\n", FILE_APPEND);
@@ -124,6 +124,9 @@ class Server extends DoraRPC\Server {
         //     ),
         //   )
 
+        $app = self::getAppInstance();
+        $di = self::getDiInstance();
+
         // Two route Controller : sync and async
         $routePrefix = '';
         $type = $param['type'];
@@ -135,27 +138,31 @@ class Server extends DoraRPC\Server {
         } elseif($type == DoraRPC\DoraConst::SW_ASYNC_SINGLE || $type == DoraRPC\DoraConst::SW_ASYNC_MULTI){
             $routePrefix = 'async/'.$apiName;
         }
+        $api = $type."_".$apiName;
+        $guid = $param['guid'];
+        $route = $routePrefix.'/'.$api.'/'.$guid;
+
 
         // use prefix special every Interface ,prefix maxLength?
 
-
         // return $param;
-        $yacPrefix = $type."_".$apiName;
+        // $yacPrefix = $type."_".$apiName;
 
-        $key = $param['guid'];
+        // $key = $param['guid'];
 
-        $yac = new Yac($yacPrefix);
+        // $yac = new Yac($yacPrefix);
 
-        // Wrong-----ttl set 1 seconds. Attension Please!!! IF server quit/restart, All Yac cache will flush !!
-        // I'm so stupid, Waht time Task would be called is unknown, Just delete the cache after doAction would be fine!!
-        // $yac->set($key,$param['api'],1);//wrong, save it for remember! 2015-12-30 shurufa
+        // // Wrong-----ttl set 1 seconds. Attension Please!!! IF server quit/restart, All Yac cache will flush !!
+        // // I'm so stupid, Waht time Task would be called is unknown, Just delete the cache after doAction would be fine!!
+        // // $yac->set($key,$param['api'],1);//wrong, save it for remember! 2015-12-30 shurufa
 
 
-        $yac->set($key,$param['api']);
+        // $yac->set($key,$param['api']);
+        
 
-        $app = self::getAppInstance();
-
-        $route = $routePrefix.'/'.$yacPrefix.'/'.$key;
+        $redis = $di->get('redis');
+        //compare to json_encode, serialize here is better, just i feel. Otherwise, json_decode array may be a object, so ugly.
+        $redis->hSet($api,$guid,serialize($param['api']));
 
         // var_dump($app);
         return $app->handle($route);

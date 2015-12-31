@@ -10,7 +10,7 @@ return new \Phalcon\Config(array(
         'password'    => '123456',
         'dbname'      => 'swoole',
         'charset'     => 'utf8',
-        'persistent'  => true,
+        // 'persistent'  => true,
     ),
     'application' => array(
         'controllersDir' => APP_PATH . '/app/controllers/',

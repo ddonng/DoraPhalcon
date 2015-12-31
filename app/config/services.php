@@ -75,7 +75,7 @@ $di->setShared('modelsMetadata', function () {
     return new MetaDataAdapter();
 });
 
-$di->set('modelsManager', function() {
+$di->setShared('modelsManager', function() {
     return new ModelsManager();
 });
 
@@ -99,4 +99,10 @@ $di->setShared('session', function () {
     $session->start();
 
     return $session;
+});
+
+$di->set('redis',function(){
+    $redis = new Redis();
+    $redis->connect('/var/run/redis/redis.sock');
+    return $redis;
 });

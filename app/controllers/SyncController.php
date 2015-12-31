@@ -3,7 +3,7 @@
 class SyncController extends Phalcon\Mvc\Controller
 {
 
-    public function indexAction($yacPrefix,$key)
+    public function indexAction($api,$guid)
     {
     	$yac = new Yac($yacPrefix);
     	$ret = $yac->get($key);

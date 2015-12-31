@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Dec 30, 2015 at 04:03 PM
+-- Generation Time: Dec 31, 2015 at 05:59 PM
 -- Server version: 5.5.28
 -- PHP Version: 5.3.17
 
@@ -28,18 +28,10 @@ SET time_zone = "+00:00";
 
 CREATE TABLE IF NOT EXISTS `user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(10) NOT NULL,
-  `department` varchar(20) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `department` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=186 ;
-
---
--- Dumping data for table `user`
---
-
-INSERT INTO `user` (`id`, `name`, `department`) VALUES
-(1, 'user11111', 'dep12111'),
-(2, 'user22222', 'dep232344');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
