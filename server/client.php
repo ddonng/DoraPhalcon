@@ -20,10 +20,11 @@ for ($i = 0; $i < 10000; $i++) {
 
     $data = array(
         "oak" => array("name" => "add_user", "param" => array("name" => "NO".$i,"department"=>"DEP".$i)),
-        // "cd" => array("name" => "update_user", "param" => array("name" => "update".$i,"department"=>"update".$i)),
-        // "mmm" => array("name" => "insert_user", "param" => array("name" => "insert".$i,"department"=>"insert".$i)),
-        // "sdgg" => array("name" => "plus_user", "param" => array("name" => "plus".$i,"department"=>"plus".$i)),
+        "cd" => array("name" => "update_user", "param" => array("name" => "update".$i,"department"=>"update".$i)),
+        "mmm" => array("name" => "insert_user", "param" => array("name" => "insert".$i,"department"=>"insert".$i)),
+        "sdgg" => array("name" => "plus_user", "param" => array("name" => "plus".$i,"department"=>"plus".$i)),
     );
+    //edit false to true to  use sync
     $ret = $obj->multiAPI($data, false, 1);
     var_dump($ret);
 
