@@ -11,18 +11,20 @@ $config = array(
 
 $obj = new DoraRPC\Client($config);
 file_put_contents("/tmp/sw_client_test.log","start:".date("Y-m-d H:i:s")."\r\n", FILE_APPEND);
-for ($i = 0; $i < 4000; $i++) {
+for ($i = 0; $i < 10000; $i++) {
     //single && sync
-    // $ret = $obj->singleAPI("get_user", array(234, $i), true,1);
+    // $ret = $obj->singleAPI("get_user", array("nu"=>234, "name"=>$i), true,1);
     // var_dump($ret);
 
     // multi && async
 
     $data = array(
         "oak" => array("name" => "add_user", "param" => array("name" => "NO".$i,"department"=>"DEP".$i)),
-        "cd" => array("name" => "update_user", "param" => array("name" => "update".$i,"department"=>"update".$i)),
+        // "cd" => array("name" => "update_user", "param" => array("name" => "update".$i,"department"=>"update".$i)),
+        // "mmm" => array("name" => "insert_user", "param" => array("name" => "insert".$i,"department"=>"insert".$i)),
+        // "sdgg" => array("name" => "plus_user", "param" => array("name" => "plus".$i,"department"=>"plus".$i)),
     );
-    $ret = $obj->multiAPI($data, false,1);
+    $ret = $obj->multiAPI($data, false, 1);
     var_dump($ret);
 
 }

@@ -5,93 +5,126 @@ class AsyncController extends ControllerBase
 
     public function addUserAction($api,$guid)
     {
-    	$ret = unserialize($this->redis->hGet($api,$guid));
+        $ret = unserialize($this->redis->hGet($api,$guid));
 
-    	/*********************************/
-    	// When called with updateUserAction together, large request eg 100000, return some error say "Record cannot be created because it already exists" but record finally insert failed
-    	// When called alone, success
-    	// 
+        /*********************************/
+        // When called with updateUserAction together, large request eg 100000, return some error say "Record cannot be created because it already exists" but record finally insert failed
+        // When called alone, success
+        // 
 
-		
-        $query = $this->modelsManager->createQuery("INSERT INTO User(name,department) VALUES(:name:,:department:)");
-        $ret2 = $query->execute(array('name'=>$ret['param']['name'],'department'=>$ret['param']['department']));
-      	
-      	if ($ret2->success()==false)
-      	{
-	        echo "\r\nSorry, $api:::::::$guid \r\n";
-	        var_export($ret);
-	        foreach ($ret2->getMessages() as $message) {
-	            echo "\r\n".$message->getMessage(), "\r\n";
-	        }
-	    }else{
-	    	unset($query);
-	    	unset($ret2);
-	    }
-	    
-	    /***********************************************************/
-/*
-    	$user = new User();
+        try{
+            // $this->db->connect();
+            $statement = $this->modelsManager->createQuery("INSERT INTO User(name,department) VALUES(:name:,:department:)");
+            $result = $statement->execute(
+                    array('name'=>$ret['param']['name'],'department'=>$ret['param']['department'])
+                );
 
-    	$user->name = $ret['param']['name'];
-    	$user->department = $ret['param']['department'];
+            $this->redis->hDel($api,$guid);
 
-    	$success = $user->save();
-    	if ($success) {
-            unset($user);
-    		// echo "Thanks for registering!\r\n";
-    	} else {
-    		echo "Sorry, $api:::::::$guid \r\n";
-    		var_export($ret);
-    		foreach ($user->getMessages() as $message) {
-    			echo "\r\n".$message->getMessage(), "\r\n";
-    		}
-    	}
-    	*/
+            if ($result->success() == false) {
+                foreach ($result->getMessages() as $message) {
+                    echo '\r\n' .$message->getMessage().'\r\n' ;
+                }
+            }else{
+                // $this->db->close();
+                return 'done';
+            }
+           
 
-    	//just for test, export to server terminal console
-        // if(!$ret2)
-        // {
-        //     var_export(array($api."-------".$guid,$ret2));
-        //      echo "\r\n";
-        // }
+        } catch (\Exception $e) {
+                echo $e->getMessage() . '\r\n';
+                echo '\r\n' . $e->getTraceAsString() . '\r\n';
+        }
         
-        $this->redis->hDel($api,$guid);
+        
+        // $this->connection->close();
 
-        return true;
     }
 
+    //test good,connection_num = task_work_num 140
     public function updateUserAction($api,$guid)
     {
-		$ret = unserialize($this->redis->hGet($api,$guid));
-        
-    	$user = new User();
-
-    	$user->name = $ret['param']['name'];
-    	$user->department = $ret['param']['department'];
-
-    	$success =  $user->save();
-    	if ($success) {
-            unset($user);
-    		// echo "Thanks for registering!\r\n";
-    	} else {
-    		echo "Sorry, $api:::::::$guid \r\n";
-    		var_export($ret);
-    		foreach ($user->getMessages() as $message) {
-    			echo "\r\n".$message->getMessage(), "\r\n";
-    		}
-    	}
-
+        $ret = unserialize($this->redis->hGet($api,$guid));
         //just for test, export to server terminal console
         if(!$ret)
         {
             var_export(array($api."-------".$guid,$ret));
              echo "\r\n";
         }
-        
+
+        $user = new User();
+
+        $user->name = $ret['param']['name'];
+        $user->department = $ret['param']['department'];
+
+        $success =  $user->save();
         $this->redis->hDel($api,$guid);
 
-        return true;
+        if ($success) {
+            unset($user);
+            // echo "Thanks for registering!\r\n";
+            return 'success';
+        } else {
+            echo "Sorry, $api:::::::$guid \r\n";
+            var_export($ret);
+            foreach ($user->getMessages() as $message) {
+                echo "\r\n".$message->getMessage(), "\r\n";
+            }
+        }
 
+    }
+
+    // very good connection num very low
+    public function insertUserAction($api,$guid)
+    {
+        $ret = unserialize($this->redis->hGet($api,$guid));
+        if(!$ret)
+        {
+            var_export(array($api."-------".$guid,$ret));
+            echo "\r\n";
+        }
+        try{
+            
+            $statement = $this->db->prepare("INSERT INTO user(name,department) VALUES (:name,:department)");
+            $result = $statement->execute(
+                array('name'=>$ret['param']['name'],'department'=>$ret['param']['department'])
+            );
+            // var_export($result);
+            if ($result == false) {
+                foreach ($result->getMessages() as $message) {
+                    echo '\r\n' .$message->getMessage().'\r\n' ;
+                }
+            }else{
+                // unset($statement);
+                // $this->db->close();
+                return 'work!';
+            }
+            // 
+        }catch (\Exception $e) {
+                echo $e->getMessage() . '\r\n';
+                echo '\r\n' . $e->getTraceAsString() . '\r\n';
+        }
+    }
+
+    //test good, connection_num = task_work_num 140
+    public function plusUserAction($api,$guid)
+    {
+        $ret = unserialize($this->redis->hGet($api,$guid));
+        try{
+           
+            $result = $this->db->execute("INSERT INTO user(name,department) VALUES ('".$ret['param']['name']."','".$ret['param']['department']."')");
+            // var_export($statement);
+            if ($result== false) {
+                foreach ($result->getMessages() as $message) {
+                    echo '\r\n' .$message->getMessage().'\r\n' ;
+                }
+            }else{
+                return 'chenggong!';
+            }
+        }catch (\Exception $e) {
+                echo $e->getMessage() . '\r\n';
+                echo '\r\n' . $e->getTraceAsString() . '\r\n';
+        }
     }
 
 }

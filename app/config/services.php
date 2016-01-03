@@ -68,6 +68,18 @@ $di->setShared('db', function () use ($config) {
     return new $class($dbConfig);
 });
 
+// $di->set('connection', function() use($config){
+//     $dbConfig = $config->database->toArray();
+//     $adapter = $dbConfig['adapter'];
+//     unset($dbConfig['adapter']);
+
+//     $class = 'Phalcon\Db\Adapter\Pdo\\' . $adapter;
+
+//     $connection = new $class($dbConfig);
+//     // $connection->connect();
+//     return $connection;
+// });
+
 /**
  * If the configuration specify the use of metadata adapter use it or use memory otherwise
  */

@@ -74,6 +74,10 @@ class Server extends DoraRPC\Server {
 
                 $syncRoute->setPrefix('sync/');
                 $syncRoute->map('get_user/{api}/{guid}','indexAction');
+                $syncRoute->map('add_user/{api}/{guid}','addUserAction');
+                $syncRoute->map('update_user/{api}/{guid}','updateUserAction');
+                $syncRoute->map('insert_user/{api}/{guid}','insertUserAction');
+                $syncRoute->map('plus_user/{api}/{guid}','plusUserAction');
                 self::$appInstance->mount($syncRoute);
 
                 $asyncRoute =  new  Phalcon\Mvc\Micro\Collection();
@@ -82,6 +86,8 @@ class Server extends DoraRPC\Server {
                 $asyncRoute->setPrefix('async/');
                 $asyncRoute->map('add_user/{api}/{guid}','addUserAction');
                 $asyncRoute->map('update_user/{api}/{guid}','updateUserAction');
+                $asyncRoute->map('insert_user/{api}/{guid}','insertUserAction');
+                $asyncRoute->map('plus_user/{api}/{guid}','plusUserAction');
                 self::$appInstance->mount($asyncRoute);
 
                 file_put_contents("/tmp/sw_server_instance.log","new AppInstance".date("Y-m-d H:i:s")."\r\n", FILE_APPEND);
@@ -172,6 +178,7 @@ class Server extends DoraRPC\Server {
     function initTask($server, $worker_id){
         //require_once() 你要加载的处理方法函数等 what's you want load (such as framework init)
         // self::getAppInstance();
+        
     }
 }
 
