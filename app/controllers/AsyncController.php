@@ -27,6 +27,8 @@ class AsyncController extends ControllerBase
                 }
             }else{
                 // $this->db->close();
+                unset($statement);
+                // $this->db->close();
                 return 'done';
             }
            
@@ -35,9 +37,7 @@ class AsyncController extends ControllerBase
                 echo $e->getMessage() . '\r\n';
                 echo '\r\n' . $e->getTraceAsString() . '\r\n';
         }
-        
-        
-        // $this->connection->close();
+
 
     }
 
@@ -95,8 +95,7 @@ class AsyncController extends ControllerBase
                     echo '\r\n' .$message->getMessage().'\r\n' ;
                 }
             }else{
-                // unset($statement);
-                // $this->db->close();
+                unset($statement);
                 return 'work!';
             }
             // 

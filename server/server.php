@@ -108,7 +108,7 @@ class Server extends DoraRPC\Server {
         //I need save array in memory, but swoole_table seems can't support, so I have to use Yac instead, By ddonngHuang 2015-12-29
         //yac key max 48, guid 32, I can use MAX 16 characters to name RPC, eg update_projects_names_with_pid
 
-        self::getAppInstance();
+        // self::getAppInstance();
 
     }
     function doWork($param){
@@ -147,23 +147,6 @@ class Server extends DoraRPC\Server {
         $api = $type."_".$apiName;
         $guid = $param['guid'];
         $route = $routePrefix.'/'.$api.'/'.$guid;
-
-
-        // use prefix special every Interface ,prefix maxLength?
-
-        // return $param;
-        // $yacPrefix = $type."_".$apiName;
-
-        // $key = $param['guid'];
-
-        // $yac = new Yac($yacPrefix);
-
-        // // Wrong-----ttl set 1 seconds. Attension Please!!! IF server quit/restart, All Yac cache will flush !!
-        // // I'm so stupid, Waht time Task would be called is unknown, Just delete the cache after doAction would be fine!!
-        // // $yac->set($key,$param['api'],1);//wrong, save it for remember! 2015-12-30 shurufa
-
-
-        // $yac->set($key,$param['api']);
         
 
         $redis = $di->get('redis');

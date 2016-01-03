@@ -113,8 +113,10 @@ $di->setShared('session', function () {
     return $session;
 });
 
-$di->set('redis',function(){
+$di->setShared('redis',function(){
+
     $redis = new Redis();
     $redis->connect('/var/run/redis/redis.sock');
+    // file_put_contents("/tmp/redis_connect.log","redis_new:".date("Y-m-d H:i:s")."\r\n", FILE_APPEND);
     return $redis;
 });

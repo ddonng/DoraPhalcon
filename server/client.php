@@ -16,11 +16,12 @@ for ($i = 0; $i < 10000; $i++) {
     // $ret = $obj->singleAPI("get_user", array("nu"=>234, "name"=>$i), true,1);
     // var_dump($ret);
 
-    // multi && async
+    // WARNING!!! modelsManager and new User at the same time have Problem!  ---Record Exists! ERROR! 
 
+    // multi && async
     $data = array(
         "oak" => array("name" => "add_user", "param" => array("name" => "NO".$i,"department"=>"DEP".$i)),
-        "cd" => array("name" => "update_user", "param" => array("name" => "update".$i,"department"=>"update".$i)),
+        // "cd" => array("name" => "update_user", "param" => array("name" => "update".$i,"department"=>"update".$i)),
         "mmm" => array("name" => "insert_user", "param" => array("name" => "insert".$i,"department"=>"insert".$i)),
         "sdgg" => array("name" => "plus_user", "param" => array("name" => "plus".$i,"department"=>"plus".$i)),
     );

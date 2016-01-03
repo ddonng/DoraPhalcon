@@ -301,6 +301,9 @@ abstract class Server
     final public function onFinish($serv, $task_id, $data)
     {
         //fixed the result more than 8k timeout bug
+        if(is_array($data))
+            var_export($data);
+        
         if (strpos($data, '$$$$$$$$') === 0) {
             $tmp_path = substr($data, 8);
             $data = file_get_contents($tmp_path);
