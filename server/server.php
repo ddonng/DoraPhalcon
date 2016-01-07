@@ -21,13 +21,13 @@ class Server extends DoraRPC\Server {
 
         //packet decode process,change by condition
         //包处理进程，根据情况调整数量
-        'worker_num' => 20,
+        'worker_num' => 500,
 
         //the number of task logical process progcessor run you business code
         //实际业务处理进程，根据需要进行调整
 
         /******************************************/
-        'task_worker_num' => 140, //太大引起崩溃会提示onFinish那里的$data是数组而不是string
+        'task_worker_num' => 50, //太大引起崩溃会提示onFinish那里的$data是数组而不是string, < mysql max_connections
         /*******************************************/
 
         'daemonize' => 0, //production 1
