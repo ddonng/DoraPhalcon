@@ -76,14 +76,14 @@ unixsocketperm 777
 ### 6.设置ulimit
 ulimit -c查看一下，如果是0，执行ulimit -n 100000，如果不能修改，需要设置 /etc/security/limits.conf，加入
 
-* soft nofile 262140
-* hard nofile 262140
-root soft nofile 262140
-root hard nofile 262140
-* soft core unlimited
-* hard core unlimited
-root soft core unlimited
-root hard core unlimited
+    * soft nofile 262140
+    * hard nofile 262140
+    root soft nofile 262140
+    root hard nofile 262140
+    * soft core unlimited
+    * hard core unlimited
+    root soft core unlimited
+    root hard core unlimited
 
 加入后如果还是不行，重启系统后再设置
 
