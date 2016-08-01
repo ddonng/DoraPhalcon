@@ -139,7 +139,7 @@ $groupConfig = array(
 //redis for service discovery register
 //when you on product env please prepare more redis to registe service for high available
 $redisconfig = array(
-    array(//first reporter
+    array(//first reporter,可改为ip
         "ip" => getenv("HOST_MACHINE_IP"),
         "port" => "6379",
     ),
