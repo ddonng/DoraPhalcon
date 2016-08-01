@@ -17,13 +17,17 @@ DoraPhalcon上PHP7，目前：
 
 ## Install
 1、安装phalcon3（最新）
+
 2、安装Dora-RPC
-composer require "xcl3721/dora-rpc"
+
+    composer require "xcl3721/dora-rpc"
 
 ## 如何体验
 准备了docker环境，按以下步骤可进行体验：
+
 1、安装docker
 这里访问[docker官网][1]，安装好对应系统的
+
 2、下载代码库
 
     git clone https://github.com/ddonng/DoraPhalcon.git
@@ -37,8 +41,10 @@ composer require "xcl3721/dora-rpc"
     docker-compose up -d
 
 由于数据库还未建立，运行会报错。
+
 5、导入sql文件
 使用mysql管理软件，如mysql-workbench，连接到localhost:3306，创建数据库core，并导入tests目录下的dora.sql创建数据表及测试数据。
+
 6、重新启动服务
 
     docker-compose down
