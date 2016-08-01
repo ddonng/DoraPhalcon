@@ -1,12 +1,8 @@
 <?php
 
-// use Phalcon\Mvc\Controller;
+use Phalcon\Mvc\Controller;
 
-class ControllerBase extends Phalcon\Di\Injectable
+class ControllerBase extends Controller
 {
-	public function __construct()
-	{
-
-	}
 
 }

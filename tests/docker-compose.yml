@@ -1,0 +1,49 @@
+version: '2'
+
+services:
+    dora_server:
+        image: ddonng/rpc:7.0
+        environment:
+            HOST_MACHINE_IP: 192.168.1.102 # 设置为宿主机ip
+        volumes:
+            - '../:/home/www/'
+        command: php /home/www/server/server.php
+        restart: always
+        networks:
+            - backend
+    dora_monitor:
+        image: ddonng/rpc:7.0
+        volumes:
+            - ../:/home/www/:rw
+        environment:
+            HOST_MACHINE_IP: 192.168.1.102 # 设置为宿主机ip
+        restart: always
+        command: php /home/www/server/monitor.php
+        networks:
+            - backend
+    dora_client:
+        image: ddonng/rpc:7.0
+        volumes:
+            - ../:/home/www/:rw
+        environment:
+            HOST_MACHINE_IP: 192.168.1.102 # 设置为宿主机ip
+        restart: always
+        command: php /home/www/server/client.php
+        networks:
+            - backend
+    mysql:
+        image: mysql:5.6
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: 123456
+        volumes:
+            - "./data/mysqldb:/var/lib/mysql:rw"
+        ports:
+            - "3306:3306"
+    redis:
+        image: redis:3.2.1
+        restart: always
+        ports:
+            - "6379:6379"
+networks:
+  backend: {}

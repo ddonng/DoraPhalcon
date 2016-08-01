@@ -1,168 +1,146 @@
 <?php
-include "src/doraconst.php";
-include "src/packet.php";
-include "src/server.php";
+define('APP_PATH', '/home/www/');
+require_once(APP_PATH . "vendor/autoload.php");
 
 error_reporting(E_ALL);
-define('APP_PATH', realpath('..'));
 
 class Server extends DoraRPC\Server {
-
     private static $diInstance;
     private static $appInstance;
     //all of this config for optimize performance
     //以下配置为优化服务性能用，请实际压测调试
     protected  $externalConfig = array(
-	   
+
        'dispatch_mode' => 3,
         //to improve the accept performance ,suggest the number of cpu X 2
         //如果想提高请求接收能力，更改这个，推荐cpu个数x2
-        'reactor_num' => 8,
-
+        'reactor_num' => 2,
         //packet decode process,change by condition
         //包处理进程，根据情况调整数量
-        'worker_num' => 500,
-
+        'worker_num' => 10,
         //the number of task logical process progcessor run you business code
         //实际业务处理进程，根据需要进行调整
-
         /******************************************/
-        'task_worker_num' => 50, //太大引起崩溃会提示onFinish那里的$data是数组而不是string, < mysql max_connections
-        /*******************************************/
+        'task_worker_num' => 20, //太大引起崩溃会提示onFinish那里的$data是数组而不是string, < mysql max_connections
 
-        'daemonize' => 0, //production 1
-   );
+    );
+    protected $externalHttpConfig = array(
+        'reactor_num' => 2,
+        'worker_num' => 10,
+        'task_worker_num' => 20,
+        'daemonize' => 0,
+    );
 
     public static function getDiInstance() {
         if (!self::$diInstance) {
             self::$diInstance = new Phalcon\Di\FactoryDefault();
-            file_put_contents("/tmp/sw_server_instance.log","new DiInstance".date("Y-m-d H:i:s")."\r\n", FILE_APPEND);
         }
         return self::$diInstance;
     }
-
     public static function getAppInstance() {
         if (!self::$appInstance) {
             try {
-
                 /**
                  * Read the configuration
                  */
                 $config = include APP_PATH . "/app/config/config.php";
-
                 /**
                  * Read auto-loader
                  */
                 include APP_PATH . "/app/config/loader.php";
 
                 /**
+             	 * Composer auto-loader
+            	 */
+                 include APP_PATH . "/vendor/autoload.php";
+
+                /**
                  * Read services
                  */
                 $di = self::getDiInstance();
-
                 include APP_PATH . "/app/config/services.php";
 
-                /**
-                 * Handle the Route
-                 */
-                
                 self::$appInstance = new \Phalcon\Mvc\Micro($di);
 
+                /**
+                 * Handle the Route, Sync RPC handler
+                 */
                 $syncRoute =  new  Phalcon\Mvc\Micro\Collection();
-                // $syncRoute->setHandler(new SyncController($di));
-                $syncRoute->setHandler('SyncController',true);
-
+                $syncRoute->setHandler('IndexController',true);
                 $syncRoute->setPrefix('sync/');
-                $syncRoute->map('get_user/{api}/{guid}','indexAction');
-                $syncRoute->map('add_user/{api}/{guid}','addUserAction');
-                $syncRoute->map('update_user/{api}/{guid}','updateUserAction');
-                $syncRoute->map('insert_user/{api}/{guid}','insertUserAction');
-                $syncRoute->map('plus_user/{api}/{guid}','plusUserAction');
+                $syncRoute->map('getUserById/{key}','getUserByIdAction');
+                $syncRoute->map('checkUserLoginInfo/{key}','checkUserLoginInfoAction');
+                $syncRoute->map('checkLoginName/{key}','checkLoginNameAction');
+                $syncRoute->map('addUser/{key}','addUserAction');
+                $syncRoute->map('updateUser/{key}','updateUserAction');
+                $syncRoute->map('deleteUser/{key}','deleteUserAction');
+                $syncRoute->map('getUsers/{key}','getUsersAction');
+
                 self::$appInstance->mount($syncRoute);
 
-                $asyncRoute =  new  Phalcon\Mvc\Micro\Collection();
-                // $asyncRoute->setHandler(new AsyncController($di));
-                $asyncRoute->setHandler('AsyncController',true);
-                $asyncRoute->setPrefix('async/');
-                $asyncRoute->map('add_user/{api}/{guid}','addUserAction');
-                $asyncRoute->map('update_user/{api}/{guid}','updateUserAction');
-                $asyncRoute->map('insert_user/{api}/{guid}','insertUserAction');
-                $asyncRoute->map('plus_user/{api}/{guid}','plusUserAction');
-                self::$appInstance->mount($asyncRoute);
-
-                file_put_contents("/tmp/sw_server_instance.log","new AppInstance".date("Y-m-d H:i:s")."\r\n", FILE_APPEND);
+                /**
+             	 * More, just like Async RPC handler
+            	 */
 
             } catch (\Exception $e) {
                 echo $e->getMessage() . '<br>';
                 echo '<pre>' . $e->getTraceAsString() . '</pre>';
             }
         }
-
         return self::$appInstance;
     }
-
     function initServer($server){
         //the callback of the server init 附加服务初始化
         //such as swoole atomic table or buffer 可以放置swoole的计数器，table等
-
-        //I need save array in memory, but swoole_table seems can't support, so I have to use Yac instead, By ddonngHuang 2015-12-29
-        //yac key max 48, guid 32, I can use MAX 16 characters to name RPC, eg update_projects_names_with_pid
-
-        // self::getAppInstance();
 
     }
     function doWork($param){
         //process you logical 业务实际处理代码仍这里
         //return the result 使用return返回处理结果
-        
-        // array (
-        //   'type' => 'SSS',
-        //   'guid' => 'b3c29d615fc233a8780f5160bf3e059b',
-        //   'fd' => 1,
-        //   'api' => 
-        //   array (
-        //     'name' => 'abc',
-        //     'param' => 
-        //     array (
-        //       0 => 234,
-        //       1 => 99,
-        //       ),
-        //     ),
-        //   )
 
         $app = self::getAppInstance();
         $di = self::getDiInstance();
 
         // Two route Controller : sync and async
+
         $routePrefix = '';
         $type = $param['type'];
         $apiName = $param['api']['name'];
-
-        if($type == DoraRPC\DoraConst::SW_SYNC_SINGLE || $type == DoraRPC\DoraConst::SW_SYNC_MULTI)
+        if($type == \DoraRPC\DoraConst::SW_MODE_WAITRESULT_SINGLE || $type == \DoraRPC\DoraConst::SW_MODE_WAITRESULT_MULTI)
         {
             $routePrefix = 'sync/'.$apiName;
-        } elseif($type == DoraRPC\DoraConst::SW_ASYNC_SINGLE || $type == DoraRPC\DoraConst::SW_ASYNC_MULTI){
+        } elseif($type == DoraRPC\DoraConst::SW_MODE_ASYNCRESULT_SINGLE || $type == DoraRPC\DoraConst::SW_MODE_ASYNCRESULT_MULTI){
             $routePrefix = 'async/'.$apiName;
         }
-        $api = $type."_".$apiName;
-        $guid = $param['guid'];
-        $route = $routePrefix.'/'.$api.'/'.$guid;
-        
 
-        $redis = $di->get('redis');
-        //compare to json_encode, serialize here is better, just i feel. Otherwise, json_decode array may be a object, so ugly.
-        $redis->hSet($api,$guid,serialize($param['api']));
+        $key = $type."_".$apiName."_".$param['guid'];
+        $table = $di->get('table');
+        $table->set($key,array("param"=>serialize($param['api']['param'])));
 
-        // var_dump($app);
+        $route = $routePrefix.'/'.$key;
         return $app->handle($route);
-
     }
-
     function initTask($server, $worker_id){
         //require_once() 你要加载的处理方法函数等 what's you want load (such as framework init)
         // self::getAppInstance();
-        
+        $app = self::getAppInstance();
+        $di = self::getDiInstance();
     }
 }
+//this server belong which logical group
+//different group different api(for Isolation)
+$groupConfig = array(
+    "list" => array(
+        "test_group",
+    ),
+);
+//redis for service discovery register
+//when you on product env please prepare more redis to registe service for high available
+$redisconfig = array(
+    array(//first reporter
+        "ip" => getenv("HOST_MACHINE_IP"),
+        "port" => "6379",
+    ),
+);
 
-$res = new Server();
+$res = new Server("0.0.0.0", 9567, 9566, $groupConfig, $redisconfig);
