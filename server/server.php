@@ -52,11 +52,6 @@ class Server extends DoraRPC\Server {
                 include APP_PATH . "/app/config/loader.php";
 
                 /**
-             	 * Composer auto-loader
-            	 */
-                 include APP_PATH . "/vendor/autoload.php";
-
-                /**
                  * Read services
                  */
                 $di = self::getDiInstance();
